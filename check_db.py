@@ -1,0 +1,18 @@
+import pymysql
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+conn = pymysql.connect(
+    host=os.getenv('DB_HOST'),
+    user=os.getenv('DB_USER'),
+    password=os.getenv('DB_PASSWORD'),
+    database=os.getenv('DB_NAME')
+)
+cursor = conn.cursor()
+cursor.execute('SELECT * FROM prediction_history')
+rows = cursor.fetchall()
+for row in rows:
+    print(row)
+conn.close()

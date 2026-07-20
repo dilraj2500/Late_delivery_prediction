@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Late Delivery Risk Prediction</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      padding: 30px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1a237e;
+      margin-bottom: 24px;
+      font-size: 24px;
+    }
+
+    .form-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+
+    input, select {
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: #1a237e;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin-top: 24px;
+      padding: 12px;
+      background: #1a237e;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover { background: #283593; }
+
+    #result {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 6px;
+      font-size: 15px;
+      display: none;
+      text-align: center;
+    }
+
+    .late { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+    .safe { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+  </style>
+</head>
+<body>
+
+<h1>Late Delivery Risk Prediction</h1>
+
+<div class="form-container">
+  <div class="grid">
+
+    <div class="form-group">
+      <label>Type</label>
+      <select id="Type">
+        <option value="DEBIT">DEBIT</option>
+        <option value="PAYMENT">PAYMENT</option>
+        <option value="CASH">CASH</option>
+        <option value="TRANSFER">TRANSFER</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Days for Shipment (Scheduled)</label>
+      <input type="number" id="Days for shipment (scheduled)" value="4">
+    </div>
+
+    <div class="form-group">
+      <label>Benefit per Order</label>
+      <input type="number" step="0.01" id="Benefit per order" value="91.25">
+    </div>
+
+    <div class="form-group">
+      <label>Sales per Customer</label>
+      <input type="number" step="0.01" id="Sales per customer" value="314.64">
+    </div>
+
+    <div class="form-group">
+      <label>Category Id</label>
+      <input type="number" id="Category Id" value="73">
+    </div>
+
+    <div class="form-group">
+      <label>Category Name</label>
+      <input type="text" id="Category Name" value="Sporting Goods">
+    </div>
+
+    <div class="form-group">
+      <label>Customer City</label>
+      <input type="text" id="Customer City" value="Caguas">
+    </div>
+
+    <div class="form-group">
+      <label>Customer Country</label>
+      <input type="text" id="Customer Country" value="Puerto Rico">
+    </div>
+
+    <div class="form-group">
+      <label>Customer Id</label>
+      <input type="number" id="Customer Id" value="20755">
+    </div>
+
+    <div class="form-group">
+      <label>Customer Segment</label>
+      <select id="Customer Segment">
+        <option value="Consumer">Consumer</option>
+        <option value="Corporate">Corporate</option>
+        <option value="Home Office">Home Office</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Customer State</label>
+      <input type="text" id="Customer State" value="PR">
+    </div>
+
+    <div class="form-group">
+      <label>Customer Zipcode</label>
+      <input type="number" id="Customer Zipcode" value="725">
+    </div>
+
+    <div class="form-group">
+      <label>Department Id</label>
+      <input type="number" id="Department Id" value="2">
+    </div>
+
+    <div class="form-group">
+      <label>Department Name</label>
+      <input type="text" id="Department Name" value="Fitness">
+    </div>
+
+    <div class="form-group">
+      <label>Latitude</label>
+      <input type="number" step="0.0001" id="Latitude" value="18.2514">
+    </div>
+
+    <div class="form-group">
+      <label>Longitude</label>
+      <input type="number" step="0.0001" id="Longitude" value="-66.0370">
+    </div>
+
+    <div class="form-group">
+      <label>Market</label>
+      <select id="Market">
+        <option value="Pacific Asia">Pacific Asia</option>
+        <option value="Europe">Europe</option>
+        <option value="USCA">USCA</option>
+        <option value="LATAM">LATAM</option>
+        <option value="Africa">Africa</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Order City</label>
+      <input type="text" id="Order City" value="Bekasi">
+    </div>
+
+    <div class="form-group">
+      <label>Order Country</label>
+      <input type="text" id="Order Country" value="Indonesia">
+    </div>
+
+    <div class="form-group">
+      <label>Order Customer Id</label>
+      <input type="number" id="Order Customer Id" value="20755">
+    </div>
+
+    <div class="form-group">
+      <label>Order Id</label>
+      <input type="number" id="Order Id" value="77202">
+    </div>
+
+    <div class="form-group">
+      <label>Order Item Cardprod Id</label>
+      <input type="number" id="Order Item Cardprod Id" value="1360">
+    </div>
+
+    <div class="form-group">
+      <label>Order Item Discount</label>
+      <input type="number" step="0.01" id="Order Item Discount" value="13.11">
+    </div>
+
+    <div class="form-group">
+      <label>Order Item Discount Rate</label>
+      <input type="number" step="0.001" id="Order Item Discount Rate" value="0.04">
+    </div>
+
+    <div class="form-group">
+      <label>Order Item Id</label>
+      <input type="number" id="Order Item Id" value="180517">
+    </div>
+
+    <div class="form-group">
+      <label>Order Item Product Price</label>
+      <input type="number" step="0.01" id="Order Item Product Price" value="327.75">
+    </div>
+
+    <div class="form-group">
+      <label>Order Item Profit Ratio</label>
+      <input type="number" step="0.001" id="Order Item Profit Ratio" value="0.29">
+    </div>
+
+    <div class="form-group">
+      <label>Order Item Quantity</label>
+      <input type="number" id="Order Item Quantity" value="1">
+    </div>
+
+    <div class="form-group">
+      <label>Sales</label>
+      <input type="number" step="0.01" id="Sales" value="327.75">
+    </div>
+
+    <div class="form-group">
+      <label>Order Item Total</label>
+      <input type="number" step="0.01" id="Order Item Total" value="314.64">
+    </div>
+
+    <div class="form-group">
+      <label>Order Profit Per Order</label>
+      <input type="number" step="0.01" id="Order Profit Per Order" value="91.25">
+    </div>
+
+    <div class="form-group">
+      <label>Order Region</label>
+      <input type="text" id="Order Region" value="Southeast Asia">
+    </div>
+
+    <div class="form-group">
+      <label>Order State</label>
+      <input type="text" id="Order State" value="Java Occidental">
+    </div>
+
+    <div class="form-group">
+      <label>Order Zipcode</label>
+      <input type="text" id="Order Zipcode" value="">
+    </div>
+
+    <div class="form-group">
+      <label>Product Card Id</label>
+      <input type="number" id="Product Card Id" value="1360">
+    </div>
+
+    <div class="form-group">
+      <label>Product Category Id</label>
+      <input type="number" id="Product Category Id" value="73">
+    </div>
+
+    <div class="form-group">
+      <label>Product Name</label>
+      <input type="text" id="Product Name" value="Smart watch">
+    </div>
+
+    <div class="form-group">
+      <label>Product Price</label>
+      <input type="number" step="0.01" id="Product Price" value="327.75">
+    </div>
+
+    <div class="form-group">
+      <label>Product Status</label>
+      <select id="Product Status">
+        <option value="0">0</option>
+        <option value="1">1</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Shipping Date</label>
+      <input type="text" id="shipping date (DateOrders)" value="2/3/2018 22:56">
+    </div>
+
+    <div class="form-group">
+      <label>Shipping Mode</label>
+      <select id="Shipping Mode">
+        <option value="Standard Class">Standard Class</option>
+        <option value="Second Class">Second Class</option>
+        <option value="First Class">First Class</option>
+        <option value="Same Day">Same Day</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Order Year</label>
+      <input type="number" id="Order_Year" value="2018">
+    </div>
+
+    <div class="form-group">
+      <label>Order Month</label>
+      <input type="number" id="Order_Month" value="1">
+    </div>
+
+    <div class="form-group">
+      <label>Order Day</label>
+      <input type="number" id="Order_Day" value="31">
+    </div>
+
+    <div class="form-group">
+      <label>Order Day of Week</label>
+      <input type="number" id="Order_DayOfWeek" value="2">
+    </div>
+
+    <div class="form-group">
+      <label>Is Weekend</label>
+      <select id="Is_Weekend">
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+      </select>
+    </div>
+
+  </div>
+
+  <button onclick="predict()">Predict</button>
+
+  <div id="result"></div>
+</div>
+
+<script>
+  async function predict() {
+    const fields = [
+      "Type", "Days for shipment (scheduled)", "Benefit per order",
+      "Sales per customer", "Category Id", "Category Name",
+      "Customer City", "Customer Country", "Customer Id",
+      "Customer Segment", "Customer State", "Customer Zipcode",
+      "Department Id", "Department Name", "Latitude", "Longitude",
+      "Market", "Order City", "Order Country", "Order Customer Id",
+      "Order Id", "Order Item Cardprod Id", "Order Item Discount",
+      "Order Item Discount Rate", "Order Item Id", "Order Item Product Price",
+      "Order Item Profit Ratio", "Order Item Quantity", "Sales",
+      "Order Item Total", "Order Profit Per Order", "Order Region",
+      "Order State", "Order Zipcode", "Product Card Id", "Product Category Id",
+      "Product Name", "Product Price", "Product Status",
+      "shipping date (DateOrders)", "Shipping Mode",
+      "Order_Year", "Order_Month", "Order_Day", "Order_DayOfWeek", "Is_Weekend"
+    ];
+
+    const numericFields = [
+      "Days for shipment (scheduled)", "Benefit per order", "Sales per customer",
+      "Category Id", "Customer Id", "Customer Zipcode", "Department Id",
+      "Latitude", "Longitude", "Order Customer Id", "Order Id",
+      "Order Item Cardprod Id", "Order Item Discount", "Order Item Discount Rate",
+      "Order Item Id", "Order Item Product Price", "Order Item Profit Ratio",
+      "Order Item Quantity", "Sales", "Order Item Total", "Order Profit Per Order",
+      "Product Card Id", "Product Category Id", "Product Price", "Product Status",
+      "Order_Year", "Order_Month", "Order_Day", "Order_DayOfWeek", "Is_Weekend"
+    ];
+
+    const data = {};
+    for (const field of fields) {
+      const el = document.getElementById(field);
+      let val = el.value.trim();
+
+      if (field === "Order Zipcode") {
+        data[field] = val === "" ? null : parseFloat(val);
+      } else if (numericFields.includes(field)) {
+        data[field] = val === "" ? null : parseFloat(val);
+      } else {
+        data[field] = val;
+      }
+    }
+
+    const resultDiv = document.getElementById("result");
+    resultDiv.style.display = "block";
+    resultDiv.className = "";
+    resultDiv.innerText = "Predicting...";
+
+    try {
+      const res = await fetch("http://127.0.0.1:8000/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data })
+      });
+
+      const json = await res.json();
+
+      if (json.prediction === 1) {
+        resultDiv.className = "late";
+        resultDiv.innerHTML = `⚠️ <b>Late Delivery Risk: HIGH</b><br>Probability: ${(json.probability * 100).toFixed(2)}%`;
+      } else {
+        resultDiv.className = "safe";
+        resultDiv.innerHTML = `✅ <b>Late Delivery Risk: LOW</b><br>Probability: ${(json.probability * 100).toFixed(2)}%`;
+      }
+    } catch (err) {
+      resultDiv.className = "late";
+      resultDiv.innerText = "Error: Server are not running?";
+    }
+  }
+</script>
+
+</body>
+</html>
