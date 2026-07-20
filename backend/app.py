@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from backend.routes import router
 from database.database import engine
 from database.models import Base
@@ -17,5 +19,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
+
+@app.get("/ui")
+def frontend():
+    return FileResponse("frontend/index.html")
 
 app.include_router(router)
