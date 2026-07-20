@@ -3,7 +3,7 @@ import pymysql
 conn = pymysql.connect(
     host='localhost',
     user='root',
-    password='Dilrajno.1',
+    password='your_password',
     database='late_delivery_db'
 )
 cursor = conn.cursor()
