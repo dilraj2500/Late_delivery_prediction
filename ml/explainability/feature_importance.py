@@ -17,8 +17,8 @@ importance = pd.DataFrame({
 importance["Absolute Coefficient"] = importance["Coefficient"].abs()
 importance = importance.sort_values("Absolute Coefficient", ascending=False)
 
-print("\nTop 20 Important Features\n")
-print(importance.head(20))
+print("\nTop 5 Important Features\n")
+print(importance.head(5))
 
 importance.to_csv(OUTPUT_PATH, index=False)
 print(f"\nFeature Importance saved to {OUTPUT_PATH}")
